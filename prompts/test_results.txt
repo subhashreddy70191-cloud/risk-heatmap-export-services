@@ -1,0 +1,32 @@
+Input: Budget exceeded by 50%
+Output:
+Risk Level: High
+Reason: Budget significantly exceeded it can impact the project
+
+-----------------------------------
+
+Input: Team is working steadily and meeting all milestones
+Output:
+Risk Level: Low
+Reason: Work is progressing as planned.
+
+-----------------------------------
+
+Input: Minor delay due to resource issue
+Output:
+Risk Level: Medium
+Reason: Small delay may affect timeline.
+
+-----------------------------------
+
+Input: Client requirements keep changing
+Output:
+Risk Level: medium
+Reason: Unclear and changing requirements increase risk.
+
+-----------------------------------
+
+Input: Project deadline is tomorrow but work incomplete
+Output:
+Risk Level: High
+Reason: Deadline is near with incomplete work.
