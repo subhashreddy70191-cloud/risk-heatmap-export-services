@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   servlet:
     context-path: /
 
@@ -8,10 +8,10 @@ spring:
     name: risk-heatmap-export-service
 
   datasource:
-    url: jdbc:h2:mem:riskmap;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: ${DB_URL:jdbc:h2:mem:riskmap;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:}
+    driver-class-name: ${DB_DRIVER:org.h2.Driver}
 
   h2:
     console:
@@ -25,26 +25,26 @@ spring:
     open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: ${DB_DIALECT:org.hibernate.dialect.H2Dialect}
 
   flyway:
     enabled: false
 
   data:
     redis:
-      host: localhost
-      port: 6379
-      password:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
       timeout: 2000ms
 
   cache:
     type: none
 
   mail:
-    host: smtp.gmail.com
-    port: 587
-    username: test@gmail.com
-    password: testpass
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME:test@gmail.com}
+    password: ${MAIL_PASSWORD:testpass}
     properties:
       mail:
         smtp:
@@ -53,16 +53,16 @@ spring:
             enable: true
 
 jwt:
-  secret: RiskHeatmap2024SecureKeyMinimum32CharsLong!!
-  expiration-ms: 86400000
-  refresh-expiration-ms: 604800000
+  secret: ${JWT_SECRET:RiskHeatmap2024SecureKeyMinimum32CharsLong!!}
+  expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+  refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000}
 
 ai-service:
-  base-url: http://localhost:5000
+  base-url: ${AI_SERVICE_URL:http://localhost:5000}
 
 app:
-  admin-email: admin@riskmap.internal
-  frontend-url: http://localhost
+  admin-email: ${ADMIN_EMAIL:admin@riskmap.internal}
+  frontend-url: ${FRONTEND_URL:http://localhost}
 
 springdoc:
   api-docs:
