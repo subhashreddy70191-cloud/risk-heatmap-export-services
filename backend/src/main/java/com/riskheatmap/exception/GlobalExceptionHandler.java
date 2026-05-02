@@ -26,6 +26,14 @@ public class GlobalExceptionHandler {
                 ex.getMessage(), request);
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Map<String, Object>> handleCustomValidation(
+            ValidationException ex, WebRequest request) {
+        log.warn("Validation error: {}", ex.getMessage());
+        return buildError(HttpStatus.BAD_REQUEST,
+                ex.getMessage(), request);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidation(
             MethodArgumentNotValidException ex, WebRequest request) {

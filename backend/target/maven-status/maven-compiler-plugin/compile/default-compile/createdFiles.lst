@@ -5,9 +5,16 @@ com\riskheatmap\RiskHeatmapApplication.class
 com\riskheatmap\entity\User.class
 com\riskheatmap\exception\ResourceNotFoundException.class
 com\riskheatmap\config\SecurityConfig.class
+com\riskheatmap\dto\RiskItemRequest$RiskItemRequestBuilder.class
 com\riskheatmap\entity\RiskItem$RiskItemBuilder.class
 com\riskheatmap\repository\RiskItemRepository.class
 com\riskheatmap\config\JwtAuthFilter.class
 com\riskheatmap\entity\RiskItem.class
 com\riskheatmap\repository\UserRepository.class
+com\riskheatmap\service\RiskItemServiceImpl.class
 com\riskheatmap\exception\GlobalExceptionHandler.class
+com\riskheatmap\exception\ValidationException.class
+com\riskheatmap\dto\RiskItemRequest.class
+com\riskheatmap\dto\RiskItemResponse$RiskItemResponseBuilder.class
+com\riskheatmap\service\RiskItemService.class
+com\riskheatmap\dto\RiskItemResponse.class
