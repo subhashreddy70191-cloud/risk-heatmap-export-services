@@ -1,0 +1,27 @@
+# Secrets — NEVER commit these
+.env
+
+# Maven build output
+target/
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+
+# Node / React
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# ChromaDB
+chroma_data/
+
+# OS files
+.DS_Store
+Thumbs.db

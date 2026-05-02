@@ -1,0 +1,9 @@
+com\riskheatmap\config\JwtProperties.class
+com\riskheatmap\RiskHeatmapApplication.class
+com\riskheatmap\exception\ResourceNotFoundException.class
+com\riskheatmap\config\SecurityConfig.class
+com\riskheatmap\entity\RiskItem$RiskItemBuilder.class
+com\riskheatmap\repository\RiskItemRepository.class
+com\riskheatmap\config\JwtAuthFilter.class
+com\riskheatmap\entity\RiskItem.class
+com\riskheatmap\exception\GlobalExceptionHandler.class
