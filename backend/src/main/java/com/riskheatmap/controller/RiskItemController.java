@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping("/api/risk-items")
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('USER')")
 public class RiskItemController {
 
     private final RiskItemService riskItemService;

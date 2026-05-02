@@ -38,7 +38,7 @@ spring:
       timeout: 2000ms
 
   cache:
-    type: none
+    type: redis
 
   mail:
     host: ${MAIL_HOST:smtp.gmail.com}
