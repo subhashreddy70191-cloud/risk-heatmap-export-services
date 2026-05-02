@@ -30,6 +30,9 @@ public class RiskItemServiceImplTest {
     @Mock
     private RiskItemRepository riskItemRepository;
 
+    @Mock
+    private AiIntegrationService aiIntegrationService;
+
     @InjectMocks
     private RiskItemServiceImpl riskItemService;
 
@@ -59,6 +62,7 @@ public class RiskItemServiceImplTest {
         assertEquals("Test Title", response.getTitle());
         assertEquals(12, response.getRiskScore());
         verify(riskItemRepository, times(1)).save(any(RiskItem.class));
+        verify(aiIntegrationService, times(1)).enrichRiskItemWithAi(eq(1L), anyString());
     }
 
     @Test

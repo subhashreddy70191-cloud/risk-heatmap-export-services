@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 public class RiskItemServiceImpl implements RiskItemService {
 
     private final RiskItemRepository riskItemRepository;
+    private final AiIntegrationService aiIntegrationService;
 
     @Override
     @Transactional
@@ -47,6 +48,11 @@ public class RiskItemServiceImpl implements RiskItemService {
                 .build();
 
         RiskItem savedItem = riskItemRepository.save(riskItem);
+        
+        // Trigger async AI Enrichment
+        String inputForAi = request.getTitle() + ". " + request.getDescription();
+        aiIntegrationService.enrichRiskItemWithAi(savedItem.getId(), inputForAi);
+
         return mapToResponse(savedItem);
     }
 
