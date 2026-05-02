@@ -26,6 +26,7 @@ import java.util.Set;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings("null")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
