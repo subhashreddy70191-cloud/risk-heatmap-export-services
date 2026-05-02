@@ -30,16 +30,18 @@ public class AiIntegrationService {
     private String aiServiceBaseUrl;
 
     @Async
+    @SuppressWarnings("unchecked")
     public void enrichRiskItemWithAi(Long riskItemId, String input) {
         log.info("Starting async AI enrichment for RiskItem ID: {}", riskItemId);
         
         try {
             // Fetch the risk item first to ensure it exists
-            RiskItem riskItem = riskItemRepository.findById(riskItemId).orElse(null);
-            if (riskItem == null || riskItem.getIsDeleted()) {
+            java.util.Optional<RiskItem> riskItemOpt = riskItemRepository.findById(riskItemId);
+            if (riskItemOpt.isEmpty() || riskItemOpt.get().getIsDeleted()) {
                 log.warn("RiskItem ID: {} not found or deleted, aborting AI enrichment.", riskItemId);
                 return;
             }
+            RiskItem riskItem = riskItemOpt.get();
 
             // Prepare the request
             String url = aiServiceBaseUrl + "/generate-report";

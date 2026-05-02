@@ -180,4 +180,95 @@ public class RiskItemServiceImplTest {
         assertEquals(1, responsePage.getTotalElements());
         assertEquals("Cyber Attack", responsePage.getContent().get(0).getTitle());
     }
+
+    @Test
+    void searchRiskItems_WithEmptyKeyword_Success() {
+        Pageable pageable = PageRequest.of(0, 10);
+        RiskItem item = RiskItem.builder().id(1L).title("All Items").build();
+        Page<RiskItem> page = new PageImpl<>(List.of(item));
+
+        when(riskItemRepository.findByIsDeletedFalse(pageable)).thenReturn(page);
+
+        Page<RiskItemResponse> responsePage = riskItemService.searchRiskItems("", pageable);
+
+        assertNotNull(responsePage);
+        assertEquals(1, responsePage.getTotalElements());
+    }
+
+    @Test
+    void filterByCategory_Success() {
+        Pageable pageable = PageRequest.of(0, 10);
+        RiskItem item = RiskItem.builder().id(1L).category("TECHNICAL").build();
+        Page<RiskItem> page = new PageImpl<>(List.of(item));
+
+        when(riskItemRepository.findByCategoryAndIsDeletedFalse("TECHNICAL", pageable)).thenReturn(page);
+
+        Page<RiskItemResponse> responsePage = riskItemService.filterByCategory("TECHNICAL", pageable);
+
+        assertNotNull(responsePage);
+        assertEquals(1, responsePage.getTotalElements());
+        assertEquals("TECHNICAL", responsePage.getContent().get(0).getCategory());
+    }
+
+    @Test
+    void filterByStatus_Success() {
+        Pageable pageable = PageRequest.of(0, 10);
+        RiskItem item = RiskItem.builder().id(1L).status("OPEN").build();
+        Page<RiskItem> page = new PageImpl<>(List.of(item));
+
+        when(riskItemRepository.findByStatusAndIsDeletedFalse("OPEN", pageable)).thenReturn(page);
+
+        Page<RiskItemResponse> responsePage = riskItemService.filterByStatus("OPEN", pageable);
+
+        assertNotNull(responsePage);
+        assertEquals(1, responsePage.getTotalElements());
+        assertEquals("OPEN", responsePage.getContent().get(0).getStatus());
+    }
+
+    @Test
+    void filterByDateRange_Success() {
+        Pageable pageable = PageRequest.of(0, 10);
+        java.time.LocalDateTime start = java.time.LocalDateTime.now().minusDays(1);
+        java.time.LocalDateTime end = java.time.LocalDateTime.now().plusDays(1);
+        RiskItem item = RiskItem.builder().id(1L).build();
+        Page<RiskItem> page = new PageImpl<>(List.of(item));
+
+        when(riskItemRepository.findByDateRange(start, end, pageable)).thenReturn(page);
+
+        Page<RiskItemResponse> responsePage = riskItemService.filterByDateRange(start, end, pageable);
+
+        assertNotNull(responsePage);
+        assertEquals(1, responsePage.getTotalElements());
+    }
+
+    @Test
+    void filterByDateRange_ValidationFailure() {
+        Pageable pageable = PageRequest.of(0, 10);
+        java.time.LocalDateTime start = java.time.LocalDateTime.now().plusDays(1);
+        java.time.LocalDateTime end = java.time.LocalDateTime.now().minusDays(1);
+
+        assertThrows(ValidationException.class, () -> riskItemService.filterByDateRange(start, end, pageable));
+    }
+
+    @Test
+    void getItemsDueSoon_Success() {
+        RiskItem item = RiskItem.builder().id(1L).build();
+        when(riskItemRepository.findItemsDueSoon(any(), any())).thenReturn(List.of(item));
+
+        List<RiskItemResponse> items = riskItemService.getItemsDueSoon(7);
+
+        assertNotNull(items);
+        assertEquals(1, items.size());
+    }
+
+    @Test
+    void getAllForExport_Success() {
+        RiskItem item = RiskItem.builder().id(1L).build();
+        when(riskItemRepository.findAllActiveForExport()).thenReturn(List.of(item));
+
+        List<RiskItemResponse> items = riskItemService.getAllForExport();
+
+        assertNotNull(items);
+        assertEquals(1, items.size());
+    }
 }
