@@ -31,7 +31,7 @@ public class AiIntegrationService {
 
     @Async
     @SuppressWarnings("unchecked")
-    public void enrichRiskItemWithAi(Long riskItemId, String input) {
+    public void enrichRiskItemWithAi(@lombok.NonNull Long riskItemId, String input) {
         log.info("Starting async AI enrichment for RiskItem ID: {}", riskItemId);
         
         try {

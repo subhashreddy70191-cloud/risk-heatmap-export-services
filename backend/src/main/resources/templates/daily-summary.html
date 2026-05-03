@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <title>Daily Risk Summary</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #333; line-height: 1.6; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px; }
-        .header { background-color: #2c3e50; color: #fff; padding: 15px; text-align: center; border-radius: 8px 8px 0 0; }
-        .content { padding: 20px; text-align: center; }
-        .stat-box { display: inline-block; width: 45%; padding: 15px; margin: 10px; border-radius: 5px; color: #fff; }
+        body { font-family: Arial, sans-serif; color: #333; line-height: 1.6; margin: 0; padding: 16px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e0e0e0; border-radius: 8px; }
+        .header { background-color: #1B4F8A; color: #fff; padding: 16px; text-align: center; border-radius: 8px 8px 0 0; }
+        .content { padding: 24px; text-align: center; }
+        .stat-box { display: inline-block; width: 40%; padding: 16px; margin: 8px; border-radius: 8px; color: #fff; }
         .active-risks { background-color: #3498db; }
         .high-risks { background-color: #e74c3c; }
-        .number { font-size: 2em; font-weight: bold; display: block; }
-        .footer { text-align: center; margin-top: 20px; font-size: 0.8em; color: #7f8c8d; }
+        .number { font-size: 2em; font-weight: bold; display: block; margin-bottom: 8px; }
+        .action-button { display: inline-block; background-color: #1B4F8A; color: #fff; text-decoration: none; padding: 12px 24px; border-radius: 8px; min-height: 44px; min-width: 44px; line-height: 20px; font-weight: bold; margin-top: 16px; box-sizing: border-box; }
+        .footer { text-align: center; margin-top: 24px; font-size: 0.8em; color: #7f8c8d; padding: 8px; }
     </style>
 </head>
 <body>
@@ -36,6 +37,7 @@
         </div>
         
         <p>Please log in to the dashboard to review and mitigate high-severity risks.</p>
+        <a href="#" class="action-button">Log In to Dashboard</a>
     </div>
     <div class="footer">
         <p>Risk Heatmap Export Service &copy; 2024</p>

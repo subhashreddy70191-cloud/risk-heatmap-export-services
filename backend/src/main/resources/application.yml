@@ -73,12 +73,17 @@ springdoc:
     packages-to-scan: com.riskheatmap 
 
 management:
+  endpoint:
+    health:
+      show-details: always
   endpoints:
     web:
       exposure:
         include: health,info
   health:
     redis:
+      enabled: false
+    mail:
       enabled: false
 
 logging:
