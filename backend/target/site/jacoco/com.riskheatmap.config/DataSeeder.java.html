@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataSeeder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">risk-heatmap-export-service</a> &gt; <a href="index.source.html" class="el_package">com.riskheatmap.config</a> &gt; <span class="el_source">DataSeeder.java</span></div><h1>DataSeeder.java</h1><pre class="source lang-java linenums">package com.riskheatmap.config;
+
+import com.riskheatmap.entity.RiskItem;
+import com.riskheatmap.repository.RiskItemRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.context.annotation.Configuration;
+
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Configuration
+@RequiredArgsConstructor
+<span class="nc" id="L16">@Slf4j</span>
+public class DataSeeder implements CommandLineRunner {
+
+    private final RiskItemRepository riskItemRepository;
+
+    @Override
+    public void run(String... args) {
+<span class="nc bnc" id="L23" title="All 2 branches missed.">        if (riskItemRepository.count() == 0) {</span>
+<span class="nc" id="L24">            log.info(&quot;Seeding 30 RiskItems...&quot;);</span>
+<span class="nc" id="L25">            List&lt;RiskItem&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L26">            String[] categories = {&quot;OPERATIONAL&quot;, &quot;FINANCIAL&quot;, &quot;STRATEGIC&quot;, &quot;COMPLIANCE&quot;, &quot;TECHNICAL&quot;, &quot;REPUTATIONAL&quot;};</span>
+<span class="nc" id="L27">            String[] statuses = {&quot;OPEN&quot;, &quot;IN_PROGRESS&quot;, &quot;MITIGATED&quot;, &quot;CLOSED&quot;};</span>
+<span class="nc" id="L28">            String[] owners = {&quot;Alice&quot;, &quot;Bob&quot;, &quot;Charlie&quot;, &quot;David&quot;, &quot;Eve&quot;};</span>
+            
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            for (int i = 1; i &lt;= 30; i++) {</span>
+<span class="nc" id="L31">                int likelihood = (i % 5) + 1;</span>
+<span class="nc" id="L32">                int impact = ((i * 2) % 5) + 1;</span>
+                
+<span class="nc" id="L34">                RiskItem item = RiskItem.builder()</span>
+<span class="nc" id="L35">                        .title(&quot;Sample Risk Item &quot; + i)</span>
+<span class="nc" id="L36">                        .description(&quot;This is a generated description for risk item &quot; + i + &quot;. It covers potential challenges and required actions.&quot;)</span>
+<span class="nc" id="L37">                        .category(categories[i % categories.length])</span>
+<span class="nc" id="L38">                        .status(statuses[i % statuses.length])</span>
+<span class="nc" id="L39">                        .likelihoodScore(likelihood)</span>
+<span class="nc" id="L40">                        .impactScore(impact)</span>
+<span class="nc" id="L41">                        .owner(owners[i % owners.length])</span>
+<span class="nc" id="L42">                        .dueDate(LocalDateTime.now().plusDays(i % 14)) // Due dates between today and 13 days from now</span>
+<span class="nc" id="L43">                        .createdBy(&quot;system&quot;)</span>
+<span class="nc" id="L44">                        .build();</span>
+<span class="nc" id="L45">                items.add(item);</span>
+            }
+            
+<span class="nc" id="L48">            riskItemRepository.saveAll(items);</span>
+<span class="nc" id="L49">            log.info(&quot;Seeded 30 RiskItems successfully.&quot;);</span>
+<span class="nc" id="L50">        } else {</span>
+<span class="nc" id="L51">            log.info(&quot;RiskItems table is not empty. Skipping seeding.&quot;);</span>
+        }
+<span class="nc" id="L53">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

@@ -70,16 +70,27 @@ public class NotificationScheduler {
                 .filter(item -> item.getOwner() != null && !item.getOwner().trim().isEmpty())
                 .collect(Collectors.groupingBy(RiskItem::getOwner));
 
+        if (itemsByOwner.isEmpty()) {
+            log.info("No items with valid owners to alert.");
+            return;
+        }
+
+        // Batch fetch all owners to avoid N+1 queries
+        List<User> owners = userRepository.findByUsernameIn(itemsByOwner.keySet());
+        Map<String, User> userMap = owners.stream()
+                .collect(Collectors.toMap(User::getUsername, user -> user));
+
         itemsByOwner.forEach((ownerUsername, items) -> {
-            Optional<User> userOpt = userRepository.findByUsername(ownerUsername);
+            User user = userMap.get(ownerUsername);
             
-            if (userOpt.isPresent()) {
-                User user = userOpt.get();
+            if (user != null) {
                 String ownerName = user.getFullName() != null ? user.getFullName() : user.getUsername();
                 emailService.sendDeadlineAlert(user.getEmail(), ownerName, items);
             } else {
                 log.warn("Owner '{}' not found in users table. Skipping deadline alert for {} items.", ownerUsername, items.size());
             }
         });
+
+        log.info("Deadline alerts sent to {} unique owners.", owners.size());
     }
 }

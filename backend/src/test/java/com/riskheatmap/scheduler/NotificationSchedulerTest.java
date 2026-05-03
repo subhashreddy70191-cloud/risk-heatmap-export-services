@@ -60,7 +60,7 @@ public class NotificationSchedulerTest {
 
         when(riskItemRepository.findItemsDueSoon(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of(item));
-        when(userRepository.findByUsername("john_doe")).thenReturn(java.util.Optional.of(user));
+        when(userRepository.findByUsernameIn(any())).thenReturn(List.of(user));
 
         notificationScheduler.sendDeadlineAlerts();
 
@@ -77,7 +77,7 @@ public class NotificationSchedulerTest {
 
         when(riskItemRepository.findItemsDueSoon(any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(List.of(item));
-        when(userRepository.findByUsername("unknown")).thenReturn(java.util.Optional.empty());
+        when(userRepository.findByUsernameIn(any())).thenReturn(List.of());
 
         notificationScheduler.sendDeadlineAlerts();
 

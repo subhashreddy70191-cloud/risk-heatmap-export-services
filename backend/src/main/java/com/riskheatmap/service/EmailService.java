@@ -60,14 +60,24 @@ public class EmailService {
     }
 
     private void sendHtmlEmail(String to, String subject, String htmlContent) throws MessagingException {
+        if (fromEmail == null || fromEmail.isBlank()) {
+            log.warn("Sender email (fromEmail) is not configured. Falling back to recipient address as sender.");
+        }
+
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setFrom(fromEmail);
+        helper.setFrom(fromEmail != null && !fromEmail.isBlank() ? fromEmail : to);
         helper.setTo(to);
         helper.setSubject(subject);
         helper.setText(htmlContent, true);
 
-        mailSender.send(message);
+        try {
+            mailSender.send(message);
+            log.debug("Successfully sent HTML email to {} with subject: {}", to, subject);
+        } catch (Exception e) {
+            log.error("SMTP Error: Failed to send email to {}. Reason: {}", to, e.getMessage());
+            throw e;
+        }
     }
 }

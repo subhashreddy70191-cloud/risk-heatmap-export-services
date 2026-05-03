@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RiskItem.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">risk-heatmap-export-service</a> &gt; <a href="index.source.html" class="el_package">com.riskheatmap.entity</a> &gt; <span class="el_source">RiskItem.java</span></div><h1>RiskItem.java</h1><pre class="source lang-java linenums">package com.riskheatmap.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(
+    name = &quot;risk_items&quot;,
+    indexes = {
+        @Index(name = &quot;idx_risk_status&quot;,     columnList = &quot;status&quot;),
+        @Index(name = &quot;idx_risk_category&quot;,   columnList = &quot;category&quot;),
+        @Index(name = &quot;idx_risk_score&quot;,      columnList = &quot;risk_score&quot;),
+        @Index(name = &quot;idx_risk_created_at&quot;, columnList = &quot;created_at&quot;),
+        @Index(name = &quot;idx_risk_created_by&quot;, columnList = &quot;created_by&quot;)
+    }
+)
+@EntityListeners(AuditingEntityListener.class)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class RiskItem {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // ── Core Fields ───────────────────────────────────────────
+
+    @Column(nullable = false, length = 255)
+    private String title;
+
+    @Column(columnDefinition = &quot;TEXT&quot;)
+    private String description;
+
+    // OPERATIONAL|FINANCIAL|STRATEGIC|COMPLIANCE|TECHNICAL|REPUTATIONAL
+    @Column(nullable = false, length = 50)
+    private String category;
+
+    // OPEN|IN_PROGRESS|MITIGATED|CLOSED
+    @Column(nullable = false, length = 50)
+    @Builder.Default
+    private String status = &quot;OPEN&quot;;
+
+    // 1 (rare) to 5 (almost certain)
+    @Column(name = &quot;likelihood_score&quot;, nullable = false)
+    private Integer likelihoodScore;
+
+    // 1 (negligible) to 5 (catastrophic)
+    @Column(name = &quot;impact_score&quot;, nullable = false)
+    private Integer impactScore;
+
+    // Computed: likelihood × impact (1–25)
+    @Column(name = &quot;risk_score&quot;)
+    private Integer riskScore;
+
+    @Column(name = &quot;owner&quot;, length = 100)
+    private String owner;
+
+    @Column(name = &quot;due_date&quot;)
+    private LocalDateTime dueDate;
+
+    // ── AI Fields (filled async after create) ─────────────────
+
+    @Column(name = &quot;ai_description&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String aiDescription;
+
+    @Column(name = &quot;ai_recommendations&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String aiRecommendations;
+
+    @Column(name = &quot;ai_report&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String aiReport;
+
+    // ── Audit Fields ──────────────────────────────────────────
+
+    // Soft delete — never physically remove rows
+    @Column(name = &quot;is_deleted&quot;, nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Column(name = &quot;created_by&quot;, length = 100)
+    private String createdBy;
+
+    @CreatedDate
+    @Column(name = &quot;created_at&quot;, nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    // ── Lifecycle Hooks ───────────────────────────────────────
+
+    @PrePersist
+    public void prePersist() {
+<span class="nc" id="L101">        computeRiskScore();</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">        if (this.isDeleted == null) this.isDeleted = false;</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (this.status == null)    this.status    = &quot;OPEN&quot;;</span>
+<span class="nc" id="L104">    }</span>
+
+    @PreUpdate
+    public void preUpdate() {
+<span class="nc" id="L108">        computeRiskScore();</span>
+<span class="nc" id="L109">    }</span>
+
+    private void computeRiskScore() {
+<span class="nc bnc" id="L112" title="All 4 branches missed.">        if (likelihoodScore != null &amp;&amp; impactScore != null) {</span>
+<span class="nc" id="L113">            this.riskScore = likelihoodScore * impactScore;</span>
+        }
+<span class="nc" id="L115">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

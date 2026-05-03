@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>RiskItemController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">risk-heatmap-export-service</a> &gt; <a href="index.source.html" class="el_package">com.riskheatmap.controller</a> &gt; <span class="el_source">RiskItemController.java</span></div><h1>RiskItemController.java</h1><pre class="source lang-java linenums">package com.riskheatmap.controller;
+
+import com.riskheatmap.dto.RiskItemRequest;
+import com.riskheatmap.dto.RiskItemResponse;
+import com.riskheatmap.service.RiskItemService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+
+@RestController
+@RequestMapping(&quot;/api/risk-items&quot;)
+@RequiredArgsConstructor
+@PreAuthorize(&quot;hasRole('USER')&quot;)
+public class RiskItemController {
+
+    private final RiskItemService riskItemService;
+
+    // GET /all paginated
+    @GetMapping(&quot;/all&quot;)
+    public ResponseEntity&lt;Page&lt;RiskItemResponse&gt;&gt; getAllRiskItems(
+            @PageableDefault(size = 10, sort = &quot;createdAt&quot;) Pageable pageable) {
+<span class="nc" id="L31">        Page&lt;RiskItemResponse&gt; response = riskItemService.getAllActiveRiskItems(pageable);</span>
+<span class="nc" id="L32">        return ResponseEntity.ok(response);</span>
+    }
+
+    // GET /{id} with 404 handling (handled by GlobalExceptionHandler)
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;RiskItemResponse&gt; getRiskItemById(@PathVariable Long id) {
+<span class="nc" id="L38">        RiskItemResponse response = riskItemService.getRiskItemById(id);</span>
+<span class="nc" id="L39">        return ResponseEntity.ok(response);</span>
+    }
+
+    // POST /create with @Valid
+    @PostMapping(&quot;/create&quot;)
+    public ResponseEntity&lt;RiskItemResponse&gt; createRiskItem(
+            @Valid @RequestBody RiskItemRequest request, Principal principal) {
+<span class="nc bnc" id="L46" title="All 2 branches missed.">        String username = principal != null ? principal.getName() : &quot;system&quot;;</span>
+<span class="nc" id="L47">        RiskItemResponse response = riskItemService.createRiskItem(request, username);</span>
+<span class="nc" id="L48">        return new ResponseEntity&lt;&gt;(response, HttpStatus.CREATED);</span>
+    }
+
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;RiskItemResponse&gt; updateRiskItem(
+            @PathVariable Long id, @Valid @RequestBody RiskItemRequest request) {
+<span class="nc" id="L54">        RiskItemResponse response = riskItemService.updateRiskItem(id, request);</span>
+<span class="nc" id="L55">        return ResponseEntity.ok(response);</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteRiskItem(@PathVariable Long id) {
+<span class="nc" id="L60">        riskItemService.deleteRiskItem(id);</span>
+<span class="nc" id="L61">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
