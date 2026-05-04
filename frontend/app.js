@@ -87,6 +87,13 @@ const views = {
                 </div>
             </div>
 
+            <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                <div class="health-pill online"><div class="dot"></div> API Gateway: Active</div>
+                <div class="health-pill online"><div class="dot"></div> AI Engine: Online</div>
+                <div class="health-pill online"><div class="dot"></div> Redis Cache: Connected</div>
+                <div class="health-pill online"><div class="dot"></div> Database: Synchronized</div>
+            </div>
+
             <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px;">
                 <!-- Heatmap Card -->
                 <div class="card">
