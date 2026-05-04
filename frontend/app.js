@@ -32,16 +32,47 @@ const router = {
 };
 
 // Data
-const mockRisks = Array.from({ length: 15 }, (_, i) => ({
+let mockRisks = Array.from({ length: 15 }, (_, i) => ({
     id: i + 1,
-    title: `Data Breach Risk ${i + 1}`,
+    title: i < 3 ? ["Cloud Outage", "SQL Injection", "Zero-day Exploit"][i] : `Security Risk ${i + 1}`,
     category: i % 3 === 0 ? 'TECHNICAL' : (i % 3 === 1 ? 'OPERATIONAL' : 'COMPLIANCE'),
-    likelihood: (i % 5) + 1,
-    impact: ((i * 2) % 5) + 1,
+    likelihood: i < 3 ? 5 : (i % 5) + 1,
+    impact: i < 3 ? 5 : ((i * 2) % 5) + 1,
     status: i % 4 === 0 ? 'OPEN' : (i % 4 === 1 ? 'MITIGATED' : 'IN_PROGRESS'),
     owner: ['Alice', 'Bob', 'Charlie'][i % 3],
     dueDate: new Date(Date.now() + i * 86400000).toLocaleDateString()
 }));
+
+let auditLogs = [
+    { id: 101, action: "System Initialized", user: "system", timestamp: "10:00 AM" },
+    { id: 102, action: "Risk Seeding Completed", user: "admin", timestamp: "10:05 AM" },
+    { id: 103, action: "Daily Email Summary Sent", user: "scheduler", timestamp: "08:00 AM" }
+];
+
+let filters = { search: '', category: 'All Categories' };
+
+// Functions
+const actions = {
+    exportCSV: () => {
+        const headers = "ID,Title,Category,Status,Score,Owner,DueDate\n";
+        const rows = mockRisks.map(r => `${r.id},${r.title},${r.category},${r.status},${r.impact*r.likelihood},${r.owner},${r.dueDate}`).join("\n");
+        const blob = new Blob([headers + rows], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Risk_Export_2026.csv';
+        a.click();
+        actions.log("CSV Export Generated");
+    },
+    log: (action) => {
+        auditLogs.unshift({ id: Date.now(), action, user: "Subhash Reddy", timestamp: new Date().toLocaleTimeString() });
+        render();
+    },
+    updateFilter: (key, val) => {
+        filters[key] = val;
+        render();
+    }
+};
 
 // Views
 const views = {
@@ -147,40 +178,69 @@ const views = {
                                 <tr>
                                     <th>Risk Title</th>
                                     <th>Level</th>
-                                    <th>Owner</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${mockRisks.slice(0, 4).map(r => `
+                                ${mockRisks.slice(0, 3).map(r => `
                                     <tr>
                                         <td>${r.title}</td>
-                                        <td><span style="color: ${r.impact * r.likelihood > 10 ? 'var(--danger)' : 'var(--warning)'}">${r.impact * r.likelihood > 10 ? 'CRITICAL' : 'HIGH'}</span></td>
-                                        <td>${r.owner}</td>
+                                        <td><span style="color: ${r.impact * r.likelihood > 15 ? 'var(--danger)' : 'var(--warning)'}">${r.impact * r.likelihood > 15 ? 'CRITICAL' : 'HIGH'}</span></td>
                                         <td><a href="#" style="color: var(--accent); font-size: 14px;">View</a></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>Audit Log</h3>
+                            <button class="btn" style="padding: 4px 8px; font-size: 11px; background: var(--glass);" onclick="actions.log('Manual Sync Triggered')">Trigger Sync</button>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            ${auditLogs.slice(0, 4).map(log => `
+                                <div style="display: flex; justify-content: space-between; font-size: 13px; padding-bottom: 8px; border-bottom: 1px solid var(--glass-border);">
+                                    <div>
+                                        <div style="font-weight: 500;">${log.action}</div>
+                                        <div style="font-size: 11px; color: var(--text-muted);">${log.user}</div>
+                                    </div>
+                                    <div style="color: var(--text-muted); font-size: 11px;">${log.timestamp}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     `,
-    inventory: () => `
+    inventory: () => {
+        const filtered = mockRisks.filter(r => 
+            (r.title.toLowerCase().includes(filters.search.toLowerCase())) &&
+            (filters.category === 'All Categories' || r.category === filters.category)
+        );
+        
+        return `
         <div class="animate-fade-in">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
                 <h1>Risk Inventory</h1>
-                <button class="btn btn-primary"><i data-lucide="plus"></i> Add New Risk</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn" style="background: var(--glass);" onclick="actions.exportCSV()"><i data-lucide="download"></i> Export CSV</button>
+                    <button class="btn btn-primary"><i data-lucide="plus"></i> Add New Risk</button>
+                </div>
             </div>
             
             <div class="card">
                 <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                    <input type="text" placeholder="Search risks..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
-                    <select style="padding: 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
-                        <option>All Categories</option>
-                        <option>TECHNICAL</option>
-                        <option>OPERATIONAL</option>
+                    <div style="position: relative; flex: 1;">
+                        <i data-lucide="search" style="position: absolute; left: 12px; top: 12px; width: 18px; color: var(--text-muted);"></i>
+                        <input type="text" placeholder="Search risks..." value="${filters.search}" oninput="actions.updateFilter('search', this.value)" style="width: 100%; padding: 10px 10px 10px 40px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                    </div>
+                    <select onchange="actions.updateFilter('category', this.value)" style="padding: 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.2); color: white;">
+                        <option ${filters.category === 'All Categories' ? 'selected' : ''}>All Categories</option>
+                        <option ${filters.category === 'TECHNICAL' ? 'selected' : ''}>TECHNICAL</option>
+                        <option ${filters.category === 'OPERATIONAL' ? 'selected' : ''}>OPERATIONAL</option>
+                        <option ${filters.category === 'COMPLIANCE' ? 'selected' : ''}>COMPLIANCE</option>
                     </select>
                 </div>
                 <table>
@@ -196,7 +256,7 @@ const views = {
                         </tr>
                     </thead>
                     <tbody>
-                        ${mockRisks.map(r => `
+                        ${filtered.map(r => `
                             <tr>
                                 <td style="color: var(--text-muted);">#${r.id}</td>
                                 <td style="font-weight: 500;">${r.title}</td>
@@ -209,9 +269,10 @@ const views = {
                         `).join('')}
                     </tbody>
                 </table>
+                ${filtered.length === 0 ? '<div style="padding: 40px; text-align: center; color: var(--text-muted);">No risks match your search criteria.</div>' : ''}
             </div>
         </div>
-    `,
+    `},
     analysis: () => `
         <div class="animate-fade-in">
             <div style="margin-bottom: 30px;">

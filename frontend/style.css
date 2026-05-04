@@ -218,3 +218,28 @@ tr:hover td {
 .animate-fade-in {
     animation: fadeIn 0.5s ease-out forwards;
 }
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .content { padding: 20px; }
+    .heatmap-container { max-width: 100%; }
+}
+
+@media (max-width: 768px) {
+    .navbar { padding: 0 20px; }
+    .nav-links { display: none; }
+    
+    /* Handle inline styles for demo simplicity */
+    div[style*="grid-template-columns: 1fr 2fr"] {
+        grid-template-columns: 1fr !important;
+    }
+    
+    div[style*="grid-template-columns: repeat(3, 1fr)"] {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .card { padding: 16px; }
+    
+    table { font-size: 12px; }
+    th, td { padding: 10px 8px; }
+}
