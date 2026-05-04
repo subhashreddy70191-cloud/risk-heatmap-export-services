@@ -1,3 +1,17 @@
+import os
+from datetime import datetime
+from groq import Groq
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def load_prompt():
+    prompt_path = os.path.join(os.path.dirname(__file__), "..", "prompts", "risk_prompt.txt")
+    if os.path.exists(prompt_path):
+        with open(prompt_path, "r") as f:
+            return f.read()
+    return "Analyze this risk: {input}"
+
 def generate_response(user_input):
     try:
         prompt_template = load_prompt()

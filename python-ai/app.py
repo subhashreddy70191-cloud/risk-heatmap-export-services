@@ -38,9 +38,6 @@ def recommend():
 
     return jsonify(recommendations)
 
-
-
-    app.run(debug=True)
 @app.route("/generate-report", methods=["POST"])
 def generate_report():
     data = request.json
@@ -64,4 +61,4 @@ def generate_report():
 
     return jsonify(report)
 if __name__ == "__main__":
- app.run(debug=True)
+    app.run(debug=True, port=5000)
