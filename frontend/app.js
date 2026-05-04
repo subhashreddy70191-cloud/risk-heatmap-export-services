@@ -71,6 +71,31 @@ const actions = {
     updateFilter: (key, val) => {
         filters[key] = val;
         render();
+    },
+    addRisk: (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const newRisk = {
+            id: mockRisks.length + 1,
+            title: fd.get('title'),
+            category: fd.get('category'),
+            status: 'OPEN',
+            likelihood: parseInt(fd.get('likelihood')),
+            impact: parseInt(fd.get('impact')),
+            owner: 'Subhash Reddy',
+            dueDate: new Date().toLocaleDateString()
+        };
+        mockRisks.unshift(newRisk);
+        actions.log(`Risk Created: ${newRisk.title}`);
+        actions.toggleModal(false);
+    },
+    deleteRisk: (id) => {
+        const risk = mockRisks.find(r => r.id === id);
+        mockRisks = mockRisks.filter(r => r.id !== id);
+        actions.log(`Risk Deleted: ${risk.title}`);
+    },
+    toggleModal: (show) => {
+        document.getElementById('modal-overlay').style.display = show ? 'flex' : 'none';
     }
 };
 
@@ -226,7 +251,7 @@ const views = {
                 <h1>Risk Inventory</h1>
                 <div style="display: flex; gap: 10px;">
                     <button class="btn" style="background: var(--glass);" onclick="actions.exportCSV()"><i data-lucide="download"></i> Export CSV</button>
-                    <button class="btn btn-primary"><i data-lucide="plus"></i> Add New Risk</button>
+                    <button class="btn btn-primary" onclick="actions.toggleModal(true)"><i data-lucide="plus"></i> Add New Risk</button>
                 </div>
             </div>
             
@@ -265,6 +290,9 @@ const views = {
                                 <td>${r.impact * r.likelihood}</td>
                                 <td>${r.owner}</td>
                                 <td style="color: var(--text-muted);">${r.dueDate}</td>
+                                <td>
+                                    <button onclick="actions.deleteRisk(${r.id})" style="background: transparent; border: none; color: var(--danger); cursor: pointer;"><i data-lucide="trash-2" style="width: 16px;"></i></button>
+                                </td>
                             </tr>
                         `).join('')}
                     </tbody>
